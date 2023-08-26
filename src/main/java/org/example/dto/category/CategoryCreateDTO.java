@@ -7,5 +7,5 @@ import org.springframework.web.multipart.MultipartFile;
 public class CategoryCreateDTO {
     private String name;
     private String description;
-    private MultipartFile imageFile;
+    private MultipartFile image;
 }

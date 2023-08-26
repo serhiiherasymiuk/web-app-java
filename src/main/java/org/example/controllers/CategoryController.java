@@ -26,7 +26,7 @@ public class CategoryController {
     public ResponseEntity<CategoryEntity> create(@ModelAttribute CategoryCreateDTO dto) {
         CategoryEntity cat = categoryMapper.CategoryByCreateCategoryDTO(dto);
 
-        if (dto.getImageFile() != null) {
+        if (dto.getImage() != null) {
             String rootDirectory = System.getProperty("user.dir");
             String imageDirectoryPath = rootDirectory + "/images/";
 
@@ -35,11 +35,11 @@ public class CategoryController {
                 if (!imageDirectory.exists()) {
                     imageDirectory.mkdirs();
                 }
-                String originalFilename = dto.getImageFile().getOriginalFilename();
+                String originalFilename = dto.getImage().getOriginalFilename();
                 String fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
                 String imageName = String.format("%s%s", RandomStringUtils.randomAlphanumeric(16), fileExtension);
                 File file = new File(imageDirectory, imageName);
-                dto.getImageFile().transferTo(file);
+                dto.getImage().transferTo(file);
                 cat.setImage(imageName);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -70,7 +70,7 @@ public class CategoryController {
                 }
             }
 
-            if (dto.getImageFile() != null) {
+            if (dto.getImage() != null) {
                 String rootDirectory = System.getProperty("user.dir");
                 String imageDirectoryPath = rootDirectory + "/images/";
 
@@ -79,11 +79,11 @@ public class CategoryController {
                     if (!imageDirectory.exists()) {
                         imageDirectory.mkdirs();
                     }
-                    String originalFilename = dto.getImageFile().getOriginalFilename();
+                    String originalFilename = dto.getImage().getOriginalFilename();
                     String fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
                     String imageName = String.format("%s%s", RandomStringUtils.randomAlphanumeric(16), fileExtension);
                     File file = new File(imageDirectory, imageName);
-                    dto.getImageFile().transferTo(file);
+                    dto.getImage().transferTo(file);
                     cat.setImage(imageName);
                 } catch (IOException e) {
                     e.printStackTrace();
