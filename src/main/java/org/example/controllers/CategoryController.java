@@ -5,6 +5,8 @@ import org.example.dto.category.CategoryCreateDTO;
 import org.example.dto.category.CategoryItemDTO;
 import org.example.dto.category.CategoryUpdateDTO;
 import org.example.entities.CategoryEntity;
+import org.example.entities.ProductEntity;
+import org.example.entities.ProductImageEntity;
 import org.example.mappers.CategoryMapper;
 import org.example.repositories.CategoryRepository;
 import org.example.storage.StorageService;
@@ -24,7 +26,7 @@ public class CategoryController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<CategoryEntity> create(@ModelAttribute CategoryCreateDTO dto) {
-        CategoryEntity cat = categoryMapper.CategoryByCreateCategoryDTO(dto);
+        CategoryEntity cat = categoryMapper.categoryByCreateCategoryDTO(dto);
 
         String fileName = storageService.saveMultipartFile(dto.getImage());
 
@@ -39,7 +41,7 @@ public class CategoryController {
         Optional<CategoryEntity> existingCategory = categoryRepository.findById(id);
 
         if (existingCategory.isPresent()) {
-            CategoryEntity cat = categoryMapper.CategoryByUpdateCategoryDTO(dto);
+            CategoryEntity cat = categoryMapper.categoryByUpdateCategoryDTO(dto);
             cat.setId(id);
 
             storageService.removeFile(existingCategory.get().getImage());
@@ -54,17 +56,16 @@ public class CategoryController {
         }
     }
 
-
     @GetMapping("{id}")
-    public ResponseEntity<CategoryEntity> getCategory(@PathVariable int id) {
-        return categoryRepository.findById(id).map(ResponseEntity::ok)
+    public ResponseEntity<CategoryItemDTO> getCategoryById(@PathVariable int id) {
+        return categoryRepository.findById(id)
+                .map(category -> ResponseEntity.ok().body(categoryMapper.categoryToItemDTO(category)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping()
     public ResponseEntity<List<CategoryItemDTO>> getAllCategories() {
-        List<CategoryItemDTO> items = categoryMapper.listCategoriesToItemDTO(categoryRepository.findAll());
-        return ResponseEntity.ok(items);
+        return ResponseEntity.ok(categoryMapper.listCategoriesToItemDTO(categoryRepository.findAll()));
     }
 
     @DeleteMapping("{id}")
@@ -72,6 +73,11 @@ public class CategoryController {
         Optional<CategoryEntity> optionalCategory = categoryRepository.findById(id);
         if (optionalCategory.isPresent()) {
             storageService.removeFile(optionalCategory.get().getImage());
+            for (ProductEntity product : optionalCategory.get().getProducts()) {
+                for (ProductImageEntity image : product.getImages()) {
+                    storageService.removeFile(image.getImage());
+                }
+            }
             categoryRepository.deleteById(id);
             return ResponseEntity.noContent().build();
         } else {
