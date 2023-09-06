@@ -10,6 +10,7 @@ import org.example.entities.ProductImageEntity;
 import org.example.mappers.ProductMapper;
 import org.example.repositories.ProductImageRepository;
 import org.example.repositories.ProductRepository;
+import org.example.storage.FileSaveFormat;
 import org.example.storage.StorageService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -34,14 +35,14 @@ public class ProductController {
         product.setImages(new ArrayList<>());
 
         for (MultipartFile image : dto.getImages()) {
-            String fileName = storageService.saveMultipartFile(image);
+            String fileName = storageService.saveThumbnailator(image, FileSaveFormat.WEBP);
             ProductImageEntity productImage = new ProductImageEntity();
             productImage.setImage(fileName);
             productImage.setProduct(product);
             product.getImages().add(productImage);
         }
 
-             productRepository.save(product);
+        productRepository.save(product);
         return ResponseEntity.ok().body(product);
     }
 
@@ -60,7 +61,7 @@ public class ProductController {
             }
 
             for (MultipartFile image : dto.getImages()) {
-                String fileName = storageService.saveMultipartFile(image);
+                String fileName = storageService.saveThumbnailator(image, FileSaveFormat.WEBP);
                 ProductImageEntity productImage = new ProductImageEntity();
                 productImage.setImage(fileName);
                 productImage.setProduct(product);

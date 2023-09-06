@@ -1,7 +1,6 @@
 package org.example.dto.product;
 
 import lombok.Data;
-import org.example.dto.category.CategoryItemDTO;
 import org.example.dto.productImage.ProductImageItemDTO;
 
 import java.util.List;

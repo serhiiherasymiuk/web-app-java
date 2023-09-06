@@ -9,6 +9,7 @@ import org.example.entities.ProductEntity;
 import org.example.entities.ProductImageEntity;
 import org.example.mappers.CategoryMapper;
 import org.example.repositories.CategoryRepository;
+import org.example.storage.FileSaveFormat;
 import org.example.storage.StorageService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,7 @@ public class CategoryController {
     public ResponseEntity<CategoryEntity> create(@ModelAttribute CategoryCreateDTO dto) {
         CategoryEntity cat = categoryMapper.categoryByCreateCategoryDTO(dto);
 
-        String fileName = storageService.saveMultipartFile(dto.getImage());
+        String fileName = storageService.saveThumbnailator(dto.getImage(), FileSaveFormat.WEBP);
 
         cat.setImage(fileName);
         categoryRepository.save(cat);
@@ -46,7 +47,7 @@ public class CategoryController {
 
             storageService.removeFile(existingCategory.get().getImage());
 
-            String fileName = storageService.saveMultipartFile(dto.getImage());
+            String fileName = storageService.saveThumbnailator(dto.getImage(), FileSaveFormat.WEBP);
             cat.setImage(fileName);
 
             categoryRepository.save(cat);
