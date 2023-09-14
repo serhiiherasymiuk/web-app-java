@@ -3,6 +3,7 @@ package org.example.controllers;
 import lombok.RequiredArgsConstructor;
 import org.example.dto.account.AuthResponseDTO;
 import org.example.dto.account.LoginDTO;
+import org.example.dto.account.RegisterDTO;
 import org.example.services.AccountService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,16 @@ public class AccountController {
         }
         catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<Void> register(@RequestBody RegisterDTO registrationRequest) {
+        try {
+            service.register(registrationRequest);
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
 }

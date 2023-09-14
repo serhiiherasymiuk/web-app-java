@@ -4,6 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.example.configuration.security.JwtService;
 import org.example.dto.account.AuthResponseDTO;
 import org.example.dto.account.LoginDTO;
+import org.example.dto.account.RegisterDTO;
+import org.example.entities.UserEntity;
+import org.example.mappers.AccountMapper;
+import org.example.mappers.CategoryMapper;
 import org.example.repositories.UserRepository;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,6 +19,7 @@ public class AccountService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final AccountMapper accountMapper;
     public AuthResponseDTO login(LoginDTO request) {
         var user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow();
@@ -25,5 +30,10 @@ public class AccountService {
         return AuthResponseDTO.builder()
                 .token(jwtToken)
                 .build();
+    }
+    public void register(RegisterDTO request) {
+        UserEntity newUser = accountMapper.itemDtoToUser(request);
+        newUser.setPassword(passwordEncoder.encode(request.getPassword()));
+        userRepository.save(newUser);
     }
 }
