@@ -32,8 +32,14 @@ public class AccountService {
                 .build();
     }
     public void register(RegisterDTO request) {
-        UserEntity newUser = accountMapper.itemDtoToUser(request);
-        newUser.setPassword(passwordEncoder.encode(request.getPassword()));
-        userRepository.save(newUser);
+        var user = userRepository.findByEmail(request.getEmail());
+        if (user.isPresent()) {
+            throw new UsernameNotFoundException("User email already registered");
+        }
+        else {
+            UserEntity newUser = accountMapper.itemDtoToUser(request);
+            newUser.setPassword(passwordEncoder.encode(request.getPassword()));
+            userRepository.save(newUser);
+        }
     }
 }
