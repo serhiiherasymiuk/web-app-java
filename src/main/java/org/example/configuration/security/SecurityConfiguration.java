@@ -25,6 +25,7 @@ public class SecurityConfiguration {
         http
                 .cors().and().csrf().disable()
                 .authorizeHttpRequests()
+                .requestMatchers("/").permitAll()
                 .requestMatchers("api/account/**").permitAll()
                 .requestMatchers("/files/**").permitAll()
                 .requestMatchers("/static/**").permitAll()
