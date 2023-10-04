@@ -40,10 +40,14 @@ public class AccountController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Void> register(@RequestBody RegisterDTO registrationRequest) {
+    public ResponseEntity<AuthResponseDTO> register(@RequestBody RegisterDTO registrationRequest) {
         try {
             service.register(registrationRequest);
-            return ResponseEntity.status(HttpStatus.CREATED).build();
+            var auth = service.login(LoginDTO.builder()
+                    .email(registrationRequest.getEmail())
+                    .password(registrationRequest.getPassword())
+                    .build());
+            return ResponseEntity.ok(auth);
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
