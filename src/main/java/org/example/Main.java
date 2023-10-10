@@ -27,6 +27,7 @@ public class Main {
                 storageService.init();
                 seedService.seedRoleData();
                 seedService.seedUserData();
+                seedService.seedCartData();
             }
             catch(Exception ex) {
                 System.out.println(ex.getMessage());

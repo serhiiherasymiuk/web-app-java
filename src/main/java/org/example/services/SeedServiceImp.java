@@ -2,10 +2,12 @@ package org.example.services;
 
 import lombok.AllArgsConstructor;
 import org.example.constants.Roles;
+import org.example.entities.CartEntity;
 import org.example.entities.RoleEntity;
 import org.example.entities.UserEntity;
 import org.example.entities.UserRoleEntity;
 import org.example.interfaces.SeedService;
+import org.example.repositories.CartRepository;
 import org.example.repositories.RoleRepository;
 import org.example.repositories.UserRepository;
 import org.example.repositories.UserRoleRepository;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 public class SeedServiceImp implements SeedService {
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
+    private final CartRepository cartRepository;
     private final UserRoleRepository userRoleRepository;
     private final PasswordEncoder passwordEncoder;
     @Override
@@ -51,6 +54,19 @@ public class SeedServiceImp implements SeedService {
                     .user(user)
                     .build();
             userRoleRepository.save(ur);
+        }
+    }
+
+    @Override
+    public void seedCartData() {
+        if (cartRepository.count() == 0) {
+            var user = userRepository.findByEmail("admin@gmail.com");
+            if (user != null) {
+                var cart = new CartEntity().builder()
+                        .user(user.get())
+                        .build();;
+                cartRepository.save(cart);
+            }
         }
     }
 }

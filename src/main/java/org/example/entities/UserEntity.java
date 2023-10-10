@@ -1,10 +1,13 @@
 package org.example.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @Builder
@@ -26,4 +29,12 @@ public class UserEntity {
     private String phone;
     @Column(length = 200, nullable = false)
     private String password;
+    @OneToOne
+    @JoinColumn(name = "cart_id", nullable = true)
+    private CartEntity cart;
+    @Transient
+    private int cartId;
+    @JsonManagedReference
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<OrderEntity> orders;
 }
