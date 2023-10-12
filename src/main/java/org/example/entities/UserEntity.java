@@ -37,4 +37,6 @@ public class UserEntity {
     @JsonManagedReference
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<OrderEntity> orders;
+    @Column(nullable = true)
+    private boolean isGoogleAuth;
 }
